@@ -23,8 +23,10 @@ Cats have roles (Buffy: good cat, Daisy: bad cat)
 
 Then try:
 
-```http://localhost:3000/food```
-```http://localhost:3000/treats```
+```
+http://localhost:3000/food
+http://localhost:3000/treats
+```
 
 Buffy (bad cat) is allowed food, but only Daisy is allowed treats.
 
