@@ -33,3 +33,5 @@ Buffy (bad cat) is allowed food, but only Daisy is allowed treats.
 App returns signed JWT to client on login containing user details.
 
 On each request, user details are extracted from request, user object is then loaded and used in authorisation of requests.
+
+No session state is stored on server.
