@@ -40,8 +40,8 @@ function runHttp({ app, config }){
 }
 
 function runHttps({ app, config }){
-  const key = fs.readFileSync('./selfsigned.key');
-  const cert = fs.readFileSync('./selfsigned.crt');
+  const key = fs.readFileSync('./certs/selfsigned.key');
+  const cert = fs.readFileSync('./certs/selfsigned.crt');
   const options = {
     key,
     cert
