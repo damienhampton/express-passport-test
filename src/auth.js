@@ -5,7 +5,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const jwt = require('jsonwebtoken');
 
-function init({ app, config, loginRoute, logoutRoute, postLoginRedirect, postLogoutRedirect, userModel }){
+function init({ app, config, loginRoute, logoutRoute, refreshRoute, expiryCheckRoute, postLoginRedirect, postLogoutRedirect, userModel }){
 
   function AuthoriseRequest(jwt_payload, done) {
     const username = extractUsernameFromJWT(jwt_payload);
@@ -13,7 +13,7 @@ function init({ app, config, loginRoute, logoutRoute, postLoginRedirect, postLog
     if(!user){
       return done(null, false);
     }
-    return done(null, user);
+    return done(null, user, jwt_payload);
   }
 
   function AuthenticateUser(username, password, done) {
@@ -78,25 +78,35 @@ function init({ app, config, loginRoute, logoutRoute, postLoginRedirect, postLog
 
   app.get(loginRoute, passport.authenticate('local'), (req, res) => {
     const jwt = createJWT(req.user.username);
-
-    res.cookie('token', jwt, {
-      expires: new Date(Date.now() + 10000000),
-      secure: false,
-      httpOnly: true,
-    });
+    res.cookie('token', jwt, cookieOptions(isSecure(config)));
     res.redirect(postLoginRedirect)
   });
 
   app.get(logoutRoute, (req, res) => {
-    res.cookie('token', null, {
-      expires: new Date(Date.now() + 10000000),
-      secure: false,
-      httpOnly: true,
-    });
+    res.cookie('token', null, cookieOptions(isSecure(config)));
     res.redirect(postLogoutRedirect)
+  });
+
+  app.get(refreshRoute, passport.authenticate('jwt'), (req, res) => {
+    const jwt = createJWT(req.user.username);
+    res.cookie('token', jwt, cookieOptions(isSecure(config)));
+    res.json({ message: 'success' });
+  });
+
+  app.get(expiryCheckRoute, passport.authenticate('jwt'), (req, res) => {
+    res.json({ expires: req.authInfo.exp });
   });
 
   return requiredPermissions => [ passport.authenticate('jwt', { session: false }) , checkPermissions(requiredPermissions)]
 }
+
+const cookieOptions = (secure = false) => ({
+  expiries: new Date(Date.now() + 10000000),
+  secure,
+  httpOnly: true,
+  path: '/'
+})
+
+const isSecure = ({ HTTPS }) => HTTPS === true;
 
 module.exports = { init };

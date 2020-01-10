@@ -37,3 +37,12 @@ App returns signed JWT to client on login containing user details.
 On each request, user details are extracted from request, user object is then loaded and used in authorisation of requests.
 
 No session state is stored on server.
+
+## HTTPS
+
+Update config, set HTTPS to true. Generate certificate and key:
+
+```
+mkdir certs
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./certs/selfsigned.key -out certs/selfsigned.crt
+```

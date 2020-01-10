@@ -10,7 +10,11 @@ function init({ authoriser }){
   });
 
   router.get('/cats', authoriser(permissions.ALLOW_ALL_CATS), (_, res) => {
-    res.send('<h1>cats</h1>');
+    res.send(`<!DOCTYPE html><html><body><h1>cats</h1>
+    <script>
+      console.log('document', document);
+    </script></body></html>
+    `);
   });
 
   router.get('/food', authoriser(permissions.ALLOW_FOOD), (_, res) => {
@@ -18,7 +22,7 @@ function init({ authoriser }){
   });
 
   router.get('/treats', authoriser(permissions.ALLOW_TREATS), (_, res) => {
-    res.send('<h1>treats</h1>');
+    res.send(`<h1>treats</h1>`);
   });
 
   return router
